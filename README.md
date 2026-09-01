@@ -98,7 +98,7 @@ The Groq API key is stored as a Netlify environment variable and injected server
 
 ## 📸 Live Demo
 
-🔗 [wdigiw-v2.netlify.app](https://wdigiw-v2.netlify.app)
+🔗 [wdigiw-v2.netlify.app](wdigiw-fixed.netlify.app)
 
 ---
 
