@@ -1,4 +1,4 @@
-[README.md](https://github.com/user-attachments/files/31688697/README.md)
+[README.md](https://github.com/user-attachments/files/31688960/README.md)
 # 🧠 Why Did I Get It Wrong?
 
 An AI-powered web app that analyzes math mistakes and explains exactly why a student's answer was wrong — step by step.
@@ -98,7 +98,7 @@ The Groq API key is stored as a Netlify environment variable and injected server
 
 ## 📸 Live Demo
 
-🔗 [wdigiw](wdigiw-fixed.netlify.app)
+🔗 [wdigiw-fixed.netlify.app](https://wdigiw-fixed.netlify.app)
 
 ---
 
