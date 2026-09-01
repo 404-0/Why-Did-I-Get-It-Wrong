@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Why Did I Get It Wrong?</title>
+  <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAABCGlDQ1BJQ0MgUHJvZmlsZQAAeJxjYGA8wQAELAYMDLl5JUVB7k4KEZFRCuwPGBiBEAwSk4sLGHADoKpv1yBqL+viUYcLcKakFicD6Q9ArFIEtBxopAiQLZIOYWuA2EkQtg2IXV5SUAJkB4DYRSFBzkB2CpCtkY7ETkJiJxcUgdT3ANk2uTmlyQh3M/Ck5oUGA2kOIJZhKGYIYnBncAL5H6IkfxEDg8VXBgbmCQixpJkMDNtbGRgkbiHEVBYwMPC3MDBsO48QQ4RJQWJRIliIBYiZ0tIYGD4tZ2DgjWRgEL7AwMAVDQsIHG5TALvNnSEfCNMZchhSgSKeDHkMyQx6QJYRgwGDIYMZAKbWPz9HbOBQAAAPsUlEQVR4nO2ae3ScZZ3HP897m0tmJpNJ0kySJm3TNg0tKZe2UCg3BUFBdBV0YXGVP/SgLKLAquyKx+PRs7i7oLuuF2ARzooH10U5gnhAyq1gbcEW2tK0NGnTTkOuM8ncb+/lefaPSVNcqqS0kLPHfs+ZzMk77+X3+z6/6/N7hZRS8RcMba4FmGucIGCuBZhrnCBgrgWYa5wgYK4FmGucIGCuBZhr/MUTYLzTD1Bq+o8AIcQ7/bijxjtKgFKgaQIQ0////6bbj0E/vNkfviAucKi90jRBdrzIzkYSjO+amFDuSD9o2iCw3gylQUp3xOuOFcedAALom8CRkM3avLo9S9c5cXY8fJDEthXQVWiamHEHqWquMTpVYWiiiBCHCTqkuKYJdF1D0wSeguPJgziesYMq6c+jQ2UKOZc0kaNRAD11HYe2pMk8I0/odJSrU6aAOS9LYe2zGQcqdmegE9LYe2gJOB7pB19l/IUR2j/ZS8dHe2qLImubsW93UnTUO0KHTj6QqdAVtcg4kp/sq7B+2MYy4JwWi4vbDFbU+wCNvO1yMGMzknPIlB08R2JIxerFIRY20OG6Lm7FwS47yKIDmoRs1EXKgG9RsHQVuaakMZpSaIaEoam8CQwkSk01TueNuoM+ooNi5iNuKYLUM0GWKUQ8Ips68jSNQqRFMaSEjjBWQYTU8YKMqwA7W8cWHWAlVcJuvmHt+jHT9BbqL1gWvD+8lbOBNFzMjz7Yp5LFKzs8NO0GKyuFG7iFKNf3EtFnpRsN7f+U4EFQRatUK+jlLJE1rISZsRFLqJQoUSBfUr5y3g5Oo5TA=="/>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.11.1/math.min.js"></script>
+  <style>
+    :root {
+      --bg:#0a0e1a; --surface:#111827; --surface2:#1a2235; --border:#1e2d45;
+      --accent:#4f8ef7; --accent2:#7c3aed; --gold:#f59e0b; --green:#10b981;
+      --red:#ef4444; --text:#e2e8f0; --muted:#64748b;
+    }
+    .light {
+      --bg:#f0f4ff; --surface:#ffffff; --surface2:#e8eeff; --border:#c7d7ff;
+      --accent:#3b6fd4; --accent2:#6d28d9; --gold:#d97706; --green:#059669;
+      --red:#dc2626; --text:#1e293b; --muted:#64748b;
+    }
+    *{box-sizing:border-box;margin:0;padding:0;}
+    html{scroll-behavior:smooth;overflow-x:hidden;height:100%;}
+    body{background:var(--bg);color:var(--text);font-family:'Plus Jakarta Sans',sans-serif;min-height:100vh;transition:background-color 0.3s,color 0.3s;-webkit-font-smoothing:antialiased;overflow-x:hidden;overflow-y:auto;}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
+    @keyframes pulse-glow{0%,100%{box-shadow:0 0 20px rgba(79,142,247,0.4);}50%{box-shadow:0 0 40px rgba(79,142,247,0.8);}}
+    @keyframes spin{to{transform:rotate(360deg);}}
+    @keyframes slideIn{from{opacity:0;transform:translateX(20px);}to{opacity:1;transform:translateX(0);}}
+    @keyframes streakPop{0%{transform:scale(1);}50%{transform:scale(1.3);}100%{transform:scale(1);}}
+    .card-animate{animation:fadeUp 0.4s ease both;}
+    .spinner{animation:spin 0.8s linear infinite;}
+    .glass{background:var(--surface);border:1px solid var(--border);backdrop-filter:blur(10px);}
+    .glow-btn:hover{animation:pulse-glow 1.5s infinite;}
+    .input-field{width:100%;background:var(--surface2);border:1.5px solid var(--border);border-radius:10px;padding:12px 14px;color:var(--text);font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;resize:vertical;outline:none;transition:border-color 0.2s;}
+    .input-field:focus{border-color:var(--accent);}
+    .tab-btn{padding:10px 18px;border:none;background:transparent;color:var(--muted);cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;font-weight:600;font-size:13px;border-bottom:2px solid transparent;transition:all 0.2s;}
+    .tab-btn.active{color:var(--accent);border-bottom-color:var(--accent);}
+    .lang-toggle{padding:5px 10px;border:1.5px solid var(--border);border-radius:8px;background:transparent;color:var(--muted);cursor:pointer;font-weight:700;font-size:12px;transition:all 0.2s;}
+    .lang-toggle.active{border-color:var(--accent);color:var(--accent);background:rgba(79,142,247,0.1);}
+    .result-card{border-radius:14px;padding:16px;}
+    .subject-btn{background:var(--surface2);border:1.5px solid var(--border);border-radius:10px;padding:10px 6px;cursor:pointer;text-align:center;transition:all 0.2s;color:var(--text);}
+    .subject-btn:hover{border-color:var(--accent);background:var(--surface2);}
+    .subject-btn.active{border-color:var(--accent);background:var(--surface2);box-shadow:0 0 0 3px rgba(79,142,247,0.2);}
+    .math-btn{background:var(--surface2);border:1px solid var(--border);border-radius:7px;padding:6px 10px;cursor:pointer;color:var(--text);font-size:15px;font-family:'JetBrains Mono',monospace;transition:all 0.15s;}
+    .math-btn:hover{background:var(--accent);color:white;}
+    .copy-btn{background:var(--surface2);border:1px solid var(--border);border-radius:7px;padding:5px 10px;cursor:pointer;color:var(--muted);font-size:11px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:600;transition:all 0.2s;white-space:nowrap;}
+    .copy-btn:hover{background:var(--accent);color:white;border-color:var(--accent);}
+    .calc-btn{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:14px;cursor:pointer;color:var(--text);font-size:16px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:600;transition:all 0.15s;}
+    .calc-btn:hover{background:var(--surface);}
+    .calc-btn.op{background:rgba(79,142,247,0.1);color:var(--accent);}
+    .calc-btn.equals{background:linear-gradient(135deg,var(--accent),var(--accent2));color:white;}
+    .calc-btn.clear{background:rgba(239,68,68,0.1);color:var(--red);}
+    .practice-item{background:var(--surface2);border-radius:12px;padding:14px;border:1px solid var(--border);}
+    /* Chatbot */
+    .chat-bubble-user{background:linear-gradient(135deg,var(--accent),var(--accent2));color:white;border-radius:18px 18px 4px 18px;padding:10px 14px;max-width:80%;font-size:14px;line-height:1.6;align-self:flex-end;}
+    .chat-bubble-ai{background:var(--surface2);border:1px solid var(--border);border-radius:18px 18px 18px 4px;padding:10px 14px;max-width:85%;font-size:14px;line-height:1.7;align-self:flex-start;}
+
+    /* Streak badge */
+    .streak-badge{background:linear-gradient(135deg,#f59e0b,#ef4444);color:white;border-radius:20px;padding:4px 12px;font-size:12px;font-weight:700;font-family:'Plus Jakarta Sans',sans-serif;}
+    /* History item */
+    .history-item{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:14px;cursor:pointer;transition:all 0.2s;}
+    .history-item:hover{border-color:var(--accent);}
+    /* Step mode */
+    .step-item{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:8px;}
+    .step-item.correct{border-color:var(--green);background:rgba(16,185,129,0.05);}
+    .step-item.wrong{border-color:var(--red);background:rgba(239,68,68,0.05);}
+    @media(max-width:480px){
+      .subject-grid{grid-template-columns:repeat(3,1fr)!important;gap:6px!important;}
+      .explain-row{flex-wrap:wrap;}
+    }
+  </style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState, useEffect, useRef, useCallback } = React;
+
+// API key is handled server-side
+
+// ─── Storage helpers (localStorage) ───
+const DB = {
+  get: (k) => { try { return JSON.parse(localStorage.getItem(k)); } catch { return null; } },
+  set: (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} },
+};
+
+const SUBJECTS = [
+  { id:'arithmetic', name:'Arithmetic', nameAr:'حساب', icon:'＋' },
+  { id:'algebra', name:'Algebra', nameAr:'جبر', icon:'𝑥' },
+  { id:'geometry', name:'Geometry', nameAr:'هندسة', icon:'△' },
+  { id:'trigonometry', name:'Trig', nameAr:'مثلثات', icon:'∠' },
+  { id:'calculus', name:'Calculus', nameAr:'تفاضل', icon:'∫' },
+  { id:'statistics', name:'Statistics', nameAr:'إحصاء', icon:'📊' },
+  { id:'linear-algebra', name:'Linear Alg', nameAr:'جبر خطي', icon:'⎡⎤' },
+  { id:'differential-equations', name:'Diff Eq', nameAr:'معادلات', icon:'dy/dx' },
+  { id:'number-theory', name:'Number Theory', nameAr:'نظرية الأعداد', icon:'ℕ' },
+  { id:'combinatorics', name:'Combinatorics', nameAr:'تراتيب', icon:'C(n,r)' },
+  { id:'probability', name:'Probability', nameAr:'احتمالات', icon:'P(A)' },
+  { id:'complex-analysis', name:'Complex', nameAr:'تحليل مركب', icon:'ℂ' },
+  { id:'physics', name:'Physics', nameAr:'فيزياء', icon:'⚡' },
+  { id:'chemistry', name:'Chemistry', nameAr:'كيمياء', icon:'⚗️' },
+];
+
+const MATH_SYMBOLS = [
+  ['π','e','∞','√','∛','∑','∏','∫','∂','∇'],
+  ['±','×','÷','≠','≤','≥','≈','∝','∈','∉'],
+  ['α','β','γ','δ','θ','λ','μ','σ','φ','ω'],
+  ['²','³','ⁿ','₁','₂','ₙ','→','⇒','⟺','∴'],
+  ['(',')','{','}','|','‖','⌊','⌋','[',']'],
+];
+
+// ─── Math evaluator ───
+const evaluate = (expr) => {
+  if (!expr || !expr.trim()) return null;
+  try {
+    let e = expr.replace(/×/g,'*').replace(/÷/g,'/').replace(/−/g,'-').replace(/√/g,'sqrt').replace(/∛/g,'cbrt').replace(/π/g,'pi');
+    const result = math.evaluate(e);
+    if (typeof result === 'number' && isFinite(result)) return Math.round(result * 1e10) / 1e10;
+    return null;
+  } catch { return null; }
+};
+
+const extractEquation = (text) => {
+  if (!text) return null;
+  const t = text.trim();
+  const stripped = t.replace(/^(what is|calculate|evaluate|find|compute|simplify)\s*/i,'').replace(/[?!.]+$/,'').trim();
+  const pureArith = /^[\d\s\+\-\*\/\×\÷\^\.\(\)π√∛,]+$/;
+  if (pureArith.test(stripped) && /\d/.test(stripped) && /[\+\-\*\/\×\÷\^]/.test(stripped)) {
+    const r = evaluate(stripped);
+    if (r !== null) return { expr: stripped, result: r };
+  }
+  return null;
+};
+
+// ─── Groq API ───
+const callGroq = async (messages, max_tokens = 1500) => {
+  const r = await fetch('/api/analyze', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ model: 'openai/gpt-oss-120b', max_tokens, messages })
+  });
+  const d = await r.json();
+  if (!r.ok) throw new Error(d.error?.message || 'API error');
+  return d.choices?.[0]?.message?.content || '';
+};
+
+// ─── Calculator ───
+function Calculator({ onUseResult }) {
+  const [display, setDisplay] = useState('0');
+  const [history, setHistory] = useState('');
+  const [justCalc, setJustCalc] = useState(false);
+  const press = (val) => {
+    if (val==='C'){setDisplay('0');setHistory('');setJustCalc(false);return;}
+    if (val==='⌫'){setDisplay(d=>d.length>1?d.slice(0,-1):'0');return;}
+    if (val==='='){const r=evaluate(display);if(r!==null){setHistory(display+' =');setDisplay(String(r));setJustCalc(true);}else setDisplay('Error');return;}
+    if (val==='√'){setDisplay(d=>{const r=evaluate(d);return r!==null?String(Math.sqrt(r)):d;});return;}
+    if (val==='x²'){setDisplay(d=>{const r=evaluate(d);return r!==null?String(r*r):d;});return;}
+    if (val==='1/x'){setDisplay(d=>{const r=evaluate(d);return r!==null&&r!==0?String(1/r):d;});return;}
+    if (val==='%'){setDisplay(d=>{const r=evaluate(d);return r!==null?String(r/100):d;});return;}
+    if (val==='+/-'){setDisplay(d=>d.startsWith('-')?d.slice(1):'-'+d);return;}
+    setDisplay(d=>{if(justCalc&&!isNaN(val)){setJustCalc(false);return val;}setJustCalc(false);if(d==='0'&&!isNaN(val))return val;if(d==='Error')return val;return d+val;});
+  };
+  const rows=[['C','⌫','%','÷'],['7','8','9','×'],['4','5','6','−'],['1','2','3','+'],['+/-','0','.','=']];
+  return (
+    <div>
+      <div style={{background:'var(--bg)',borderRadius:12,padding:'12px 16px',marginBottom:12,border:'1px solid var(--border)'}}>
+        <div style={{color:'var(--muted)',fontSize:12,minHeight:18,fontFamily:"'JetBrains Mono',monospace"}}>{history}</div>
+        <div style={{fontSize:28,fontWeight:700,textAlign:'right',color:'var(--text)',wordBreak:'break-all',fontFamily:"'JetBrains Mono',monospace"}}>{display}</div>
+      </div>
+      <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:6,marginBottom:6}}>
+        {['√','x²','1/x','π'].map(b=>(<button key={b} className="calc-btn op" style={{fontSize:14}} onClick={()=>press(b)}>{b}</button>))}
+      </div>
+      {rows.map((row,i)=>(
+        <div key={i} style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:6,marginBottom:6}}>
+          {row.map(b=>(<button key={b} className={`calc-btn ${b==='='?'equals':['C','⌫'].includes(b)?'clear':['÷','×','−','+'].includes(b)?'op':''}`} onClick={()=>press(b==='−'?'-':b)}>{b}</button>))}
+        </div>
+      ))}
+      {evaluate(display)!==null&&(<button onClick={()=>onUseResult(display,String(evaluate(display)))} style={{width:'100%',marginTop:8,background:'var(--green)',color:'white',border:'none',borderRadius:10,padding:'12px',fontFamily:"'Plus Jakarta Sans',sans-serif",fontWeight:700,fontSize:14,cursor:'pointer'}}>✓ Use this result in analysis</button>)}
+    </div>
+  );
+}
+
+// ─── Math Keyboard ───
+function MathKeyboard({ onInsert }) {
+  return (
+    <div>{MATH_SYMBOLS.map((row,i)=>(<div key={i} style={{display:'flex',flexWrap:'wrap',gap:5,marginBottom:5}}>{row.map(sym=>(<button key={sym} className="math-btn" onClick={()=>onInsert(sym)}>{sym}</button>))}</div>))}</div>
+  );
+}
+
+// ─── Copy Button ───
+function CopyButton({ text }) {
+  const [copied, setCopied] = useState(false);
+  return (
+    <button className="copy-btn" onClick={()=>{navigator.clipboard.writeText(text);setCopied(true);setTimeout(()=>setCopied(false),2000);}}>
+      {copied?'✓ Copied':'⎘ Copy'}
+    </button>
+  );
+}
+
+// ─── Result Card ───
+function ResultCard({ card, index }) {
+  const configs = {
+    correctAnswer:{border:'#10b981',bg:'rgba(16,185,129,0.08)',icon:'✓',label:'Correct Answer',labelAr:'الجواب الصحيح',accent:'#10b981'},
+    mistakeType:{border:'#ef4444',bg:'rgba(239,68,68,0.08)',icon:'⚠',label:'Type of Mistake',labelAr:'نوع الخطأ',accent:'#ef4444'},
+    whereItWentWrong:{border:'#f59e0b',bg:'rgba(245,158,11,0.08)',icon:'📍',label:'Where You Went Wrong',labelAr:'أين وقع الخطأ',accent:'#f59e0b'},
+    whyItWasWrong:{border:'#8b5cf6',bg:'rgba(139,92,246,0.08)',icon:'🧠',label:'Why It Was Wrong',labelAr:'لماذا كان خاطئاً',accent:'#8b5cf6'},
+    correctApproach:{border:'#3b82f6',bg:'rgba(59,130,246,0.08)',icon:'📐',label:'Correct Approach',labelAr:'الأسلوب الصحيح',accent:'#3b82f6'},
+    keyConceptToRemember:{border:'#f59e0b',bg:'rgba(245,158,11,0.08)',icon:'💡',label:'Key Concept',labelAr:'المفهوم الأساسي',accent:'#f59e0b'},
+    similarPractice:{border:'#06b6d4',bg:'rgba(6,182,212,0.08)',icon:'📝',label:'Practice Suggestion',labelAr:'تمارين مقترحة',accent:'#06b6d4'},
+    difficulty:{border:'#ec4899',bg:'rgba(236,72,153,0.08)',icon:'📊',label:'Difficulty',labelAr:'مستوى الصعوبة',accent:'#ec4899'},
+  };
+  const c = configs[card.key] || configs.correctAnswer;
+  return (
+    <div className="result-card card-animate" style={{background:c.bg,borderColor:c.border,borderWidth:1,borderStyle:'solid',direction:card.lang==='ar'?'rtl':'ltr',animationDelay:`${index*0.05}s`}}>
+      <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:10}}>
+        <div style={{display:'flex',alignItems:'center',gap:8}}>
+          <span style={{fontSize:20}}>{c.icon}</span>
+          <span style={{fontFamily:"'Plus Jakarta Sans',sans-serif",fontWeight:700,fontSize:13,color:c.accent,textTransform:'uppercase',letterSpacing:'0.5px'}}>{card.lang==='ar'?c.labelAr:c.label}</span>
+        </div>
+        <CopyButton text={card.value}/>
+      </div>
+      <p style={{color:'var(--text)',lineHeight:2,fontSize:15,whiteSpace:'pre-line',fontFamily:card.lang==='ar'?"'Noto Sans Arabic','Segoe UI',sans-serif":card.key==='correctApproach'||card.key==='correctAnswer'?"'JetBrains Mono',monospace":"'Plus Jakarta Sans',sans-serif",textAlign:card.lang==='ar'?'right':'left'}}>{card.value}</p>
+    </div>
+  );
+}
+
+// ─── Practice Problems ───
+function PracticeProblems({ problems, lang }) {
+  const [answers, setAnswers] = useState({});
+  const [checked, setChecked] = useState({});
+  const T = (en,ar) => lang==='ar'?ar:en;
+  return (
+    <div style={{marginTop:8}}>
+      <div style={{fontFamily:"'Plus Jakarta Sans',sans-serif",fontWeight:700,fontSize:13,color:'var(--accent)',textTransform:'uppercase',letterSpacing:'0.5px',marginBottom:12}}>{T('🎯 Practice Problems','🎯 تمارين للتدريب')}</div>
+      {problems.map((p,i)=>(
+        <div key={i} className="practice-item" style={{marginBottom:8}}>
+          <div style={{fontWeight:600,marginBottom:8,fontSize:14,direction:lang==='ar'?'rtl':'ltr'}}>{i+1}. {p.question}</div>
+          <div style={{display:'flex',gap:8}}>
+            <input className="input-field" style={{flex:1,padding:'8px 12px',fontSize:14}} placeholder={T('Your answer...','إجابتك...')} value={answers[i]||''} onChange={e=>setAnswers(a=>({...a,[i]:e.target.value}))}/>
+            <button onClick={()=>setChecked(c=>({...c,[i]:true}))} style={{background:'var(--accent)',color:'white',border:'none',borderRadius:8,padding:'8px 14px',cursor:'pointer',fontFamily:"'Plus Jakarta Sans',sans-serif",fontWeight:700,fontSize:13}}>{T('Check','تحقق')}</button>
+          </div>
+          {checked[i]&&(<div style={{marginTop:8,fontSize:13,color:'var(--muted)',direction:lang==='ar'?'rtl':'ltr'}}>{T('✓ Answer: ','✓ الجواب: ')}<strong style={{color:'var(--green)'}}>{p.answer}</strong></div>)}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// ─── Chatbot Component ───
+function Chatbot({ analysis, practiceProblems, lang, question, studentAnswer }) {
+  const [messages, setMessages] = useState([]);
+  const [input, setInput] = useState('');
+  const [loading, setLoading] = useState(false);
+  const bottomRef = useRef(null);
+  const T = (en,ar) => lang==='ar'?ar:en;
+
+  useEffect(() => {
+    if (bottomRef.current) bottomRef.current.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
+
+  useEffect(() => {
+    const welcome = lang === 'ar'
+      ? 'مرحباً! 👋 لديّ كامل تحليل خطأك أمامي. اسألني أي شيء عن الشرح، أو اطلب مني توضيح خطوة معينة، أو أعطيك مثالاً آخر.'
+      : 'Hi! 👋 I have your full error analysis in front of me. Ask me anything about the explanation, ask me to clarify a specific step, or request another example.';
+    setMessages([{ role: 'assistant', content: welcome }]);
+  }, []);
+
+  const send = async () => {
+    if (!input.trim() || loading) return;
+    const userMsg = input.trim();
+    setInput('');
+    setMessages(m => [...m, { role: 'user', content: userMsg }]);
+    setLoading(true);
+
+    try {
+      const analysisContext = analysis ? analysis.map(c => `${c.key}: ${c.value}`).join('\n') : '';
+      const systemPrompt = lang === 'ar'
+        ? `أنت مدرس رياضيات ذكي وودود. لديك السياق الكامل لخطأ الطالب:\n\nالسؤال الأصلي: ${question}\nإجابة الطالب الخاطئة: ${studentAnswer}\n\nتحليل الخطأ:\n${analysisContext}\n\nأجب على أسئلة الطالب بالعربية الفصحى فقط. كن واضحاً وودوداً ومشجعاً. إذا طلب مثالاً، قدم مثالاً جديداً مختلفاً. إذا لم يفهم خطوة، اشرحها بطريقة أبسط.`
+        : `You are a friendly, smart math tutor. You have the full context of the student's mistake:\n\nOriginal question: ${question}\nStudent's wrong answer: ${studentAnswer}\n\nError analysis:\n${analysisContext}\n\nAnswer the student's questions clearly, warmly and encouragingly. If they ask for an example, give a new different one. If they don't understand a step, explain it more simply.`;
+
+      const history = messages.slice(-6).map(m => ({ role: m.role, content: m.content }));
+      const response = await callGroq([
+        { role: 'system', content: systemPrompt },
+        ...history,
+        { role: 'user', content: userMsg }
+      ], 800);
+      setMessages(m => [...m, { role: 'assistant', content: response }]);
+    } catch (err) {
+      setMessages(m => [...m, { role: 'assistant', content: T('Sorry, something went wrong. Try again.', 'عذراً، حدث خطأ. حاول مرة أخرى.') }]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="glass" style={{ borderRadius:16, marginTop:16, display:'flex', flexDirection:'column', height:420 }}>
+      <div style={{ padding:'14px 16px', borderBottom:'1px solid var(--border)', display:'flex', alignItems:'center', gap:8 }}>
+        <span style={{ fontSize:20 }}>🤖</span>
+        <span style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", fontWeight:700, fontSize:15, color:'var(--text)' }}>{T('Ask the AI Tutor','اسأل المدرس الذكي')}</span>
+        <span style={{ fontSize:11, color:'var(--green)', background:'rgba(16,185,129,0.1)', padding:'2px 8px', borderRadius:20, fontWeight:600 }}>LIVE</span>
+      </div>
+      <div style={{ flex:1, overflowY:'auto', padding:14, display:'flex', flexDirection:'column', gap:10 }}>
+        {messages.map((m,i) => (
+          <div key={i} style={{ display:'flex', justifyContent:m.role==='user'?'flex-end':'flex-start' }}>
+            <div className={m.role==='user'?'chat-bubble-user':'chat-bubble-ai'} style={{ direction:lang==='ar'?'rtl':'ltr', fontFamily:lang==='ar'?"'Noto Sans Arabic',sans-serif":"'Plus Jakarta Sans',sans-serif" }}>
+              {m.content}
+            </div>
+          </div>
+        ))}
+        {loading && (
+          <div style={{ display:'flex', justifyContent:'flex-start' }}>
+            <div className="chat-bubble-ai" style={{ color:'var(--muted)' }}>
+              <span style={{ display:'inline-flex', gap:3 }}>
+                <span style={{ animation:'fadeUp 0.6s infinite', animationDelay:'0s' }}>●</span>
+                <span style={{ animation:'fadeUp 0.6s infinite', animationDelay:'0.2s' }}>●</span>
+                <span style={{ animation:'fadeUp 0.6s infinite', animationDelay:'0.4s' }}>●</span>
+              </span>
+            </div>
+          </div>
+        )}
+        <div ref={bottomRef}/>
+      </div>
+      <div style={{ padding:'10px 14px', borderTop:'1px solid var(--border)', display:'flex', gap:8 }}>
+        <input
+          value={input} onChange={e=>setInput(e.target.value)} onKeyDown={e=>e.key==='Enter'&&send()}
+          placeholder={T('Ask anything about this explanation...','اسأل أي شيء عن هذا الشرح...')}
+          style={{ flex:1, background:'var(--surface2)', border:'1.5px solid var(--border)', borderRadius:10, padding:'10px 12px', color:'var(--text)', fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:13, outline:'none' }}
+          dir={lang==='ar'?'rtl':'ltr'}
+        />
+        <button onClick={send} disabled={loading||!input.trim()} style={{ background:loading||!input.trim()?'var(--surface2)':'var(--accent)', color:loading||!input.trim()?'var(--muted)':'white', border:'none', borderRadius:10, padding:'10px 16px', cursor:loading||!input.trim()?'not-allowed':'pointer', fontWeight:700, fontSize:14, transition:'all 0.2s' }}>
+          {lang==='ar'?'↵':'Send'}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// ─── Mistake History ───
+function HistoryView({ lang, onReplay }) {
+  const T = (en,ar) => lang==='ar'?ar:en;
+  const history = DB.get('history') || [];
+  const [filter, setFilter] = useState('all');
+
+  const subjects = [...new Set(history.map(h => h.subject))];
+  const filtered = filter === 'all' ? history : history.filter(h => h.subject === filter);
+
+  // Pattern analysis
+  const mistakeTypes = {};
+  history.forEach(h => {
+    const type = h.mistakeType || 'Unknown';
+    mistakeTypes[type] = (mistakeTypes[type] || 0) + 1;
+  });
+  const topMistake = Object.entries(mistakeTypes).sort((a,b)=>b[1]-a[1])[0];
+
+  // Weekly count
+  const weekAgo = Date.now() - 7*24*60*60*1000;
+  const weeklyCount = history.filter(h => h.timestamp > weekAgo).length;
+
+  return (
+    <div>
+      {/* Stats row */}
+      <div style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:10, marginBottom:16 }}>
+        {[
+          { icon:'📊', label:T('Total Analyses','إجمالي التحليلات'), value:history.length },
+          { icon:'📅', label:T('This Week','هذا الأسبوع'), value:weeklyCount },
+          { icon:'⚠️', label:T('Top Mistake','أكثر خطأ'), value:topMistake?topMistake[0].split(' ').slice(0,2).join(' '):'—' },
+        ].map((s,i)=>(
+          <div key={i} className="glass" style={{ borderRadius:12, padding:'12px 10px', textAlign:'center' }}>
+            <div style={{ fontSize:22, marginBottom:4 }}>{s.icon}</div>
+            <div style={{ fontSize:22, fontWeight:800, color:'var(--accent)', fontFamily:"'Plus Jakarta Sans',sans-serif" }}>{s.value}</div>
+            <div style={{ fontSize:10, color:'var(--muted)', fontFamily:"'Plus Jakarta Sans',sans-serif" }}>{s.label}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* Weekly Report */}
+      {history.length > 0 && (
+        <div className="glass" style={{ borderRadius:14, padding:16, marginBottom:16, background:'rgba(79,142,247,0.05)' }}>
+          <div style={{ fontWeight:700, fontSize:14, color:'var(--accent)', marginBottom:8, fontFamily:"'Plus Jakarta Sans',sans-serif" }}>📈 {T('Weekly Pattern Report','تقرير الأسبوع')}</div>
+          {topMistake && <div style={{ fontSize:13, color:'var(--text)', fontFamily:"'Plus Jakarta Sans',sans-serif", lineHeight:1.7 }}>
+            {T(`Your most common mistake is "${topMistake[0]}" (${topMistake[1]} times). Focus on this!`,
+               `أكثر خطأ لديك هو "${topMistake[0]}" (${topMistake[1]} مرة). ركز على هذا!`)}
+          </div>}
+          <div style={{ fontSize:13, color:'var(--muted)', marginTop:6, fontFamily:"'Plus Jakarta Sans',sans-serif" }}>
+            {T(`You practiced ${weeklyCount} time(s) this week. ${weeklyCount >= 5 ? '🔥 Great consistency!' : weeklyCount >= 2 ? '👍 Keep going!' : '💪 Try to practice more!'}`,
+               `تدربت ${weeklyCount} مرة هذا الأسبوع. ${weeklyCount >= 5 ? '🔥 ممتاز!' : weeklyCount >= 2 ? '👍 استمر!' : '💪 حاول التدرب أكثر!'}`)}
+          </div>
+        </div>
+      )}
+
+      {/* Filter */}
+      {subjects.length > 0 && (
+        <div style={{ display:'flex', gap:6, flexWrap:'wrap', marginBottom:14 }}>
+          {['all', ...subjects].map(s => (
+            <button key={s} onClick={() => setFilter(s)}
+              style={{ padding:'5px 12px', borderRadius:20, border:'1.5px solid', cursor:'pointer', fontSize:12, fontWeight:600, fontFamily:"'Plus Jakarta Sans',sans-serif",
+                borderColor: filter===s ? 'var(--accent)' : 'var(--border)',
+                background: filter===s ? 'rgba(79,142,247,0.1)' : 'transparent',
+                color: filter===s ? 'var(--accent)' : 'var(--muted)' }}>
+              {s === 'all' ? T('All','الكل') : s}
+            </button>
+          ))}
+        </div>
+      )}
+
+      {filtered.length === 0 ? (
+        <div style={{ textAlign:'center', padding:40, color:'var(--muted)', fontFamily:"'Plus Jakarta Sans',sans-serif" }}>
+          {T('No history yet. Start analyzing!','لا يوجد سجل بعد. ابدأ التحليل!')}
+        </div>
+      ) : (
+        <div style={{ display:'flex', flexDirection:'column', gap:10 }}>
+          {[...filtered].reverse().map((h,i)=>(
+            <div key={i} className="history-item" onClick={()=>onReplay(h)}>
+              <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:6 }}>
+                <div style={{ fontWeight:700, fontSize:13, color:'var(--accent)', fontFamily:"'Plus Jakarta Sans',sans-serif" }}>{h.subject}</div>
+                <div style={{ fontSize:11, color:'var(--muted)', fontFamily:"'Plus Jakarta Sans',sans-serif" }}>{new Date(h.timestamp).toLocaleDateString()}</div>
+              </div>
+              <div style={{ fontSize:13, color:'var(--text)', marginBottom:4, fontFamily:"'Plus Jakarta Sans',sans-serif", whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis' }}>❓ {h.question}</div>
+              <div style={{ fontSize:12, color:'var(--red)', fontFamily:"'Plus Jakarta Sans',sans-serif" }}>✗ {h.studentAnswer}</div>
+              {h.mistakeType && <div style={{ fontSize:11, color:'var(--muted)', marginTop:4, fontFamily:"'Plus Jakarta Sans',sans-serif" }}>⚠ {h.mistakeType}</div>}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ─── Step-by-Step Mode ───
+function StepMode({ lang, subject }) {
+  const [question, setQuestion] = useState('');
+  const [steps, setSteps] = useState([]);
+  const [userSteps, setUserSteps] = useState([]);
+  const [currentStep, setCurrentStep] = useState(0);
+  const [input, setInput] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [feedback, setFeedback] = useState(null);
+  const [done, setDone] = useState(false);
+  const T = (en,ar) => lang==='ar'?ar:en;
+
+  const startProblem = async () => {
+    if (!question.trim()) return;
+    setLoading(true); setSteps([]); setUserSteps([]); setCurrentStep(0); setFeedback(null); setDone(false);
+    try {
+      const subjectName = SUBJECTS.find(s=>s.id===subject)?.name || subject;
+      const prompt = lang === 'ar'
+        ? `أنت مدرس رياضيات. المسألة التالية في مادة ${subjectName}: "${question}"\nقسّم الحل الصحيح إلى خطوات واضحة ومرقمة. أجب بـ JSON فقط:\n{"steps": ["الخطوة الأولى...", "الخطوة الثانية...", "الخطوة الثالثة..."]}`
+        : `You are a math tutor. For this ${subjectName} problem: "${question}"\nBreak the correct solution into clear numbered steps. Respond ONLY with JSON:\n{"steps": ["Step 1: ...", "Step 2: ...", "Step 3: ..."]}`;
+      const text = await callGroq([{ role:'user', content:prompt }], 600);
+      const cleaned = text.replace(/```json\n?|\n?```/g,'').trim();
+      const parsed = JSON.parse(cleaned);
+      setSteps(parsed.steps || []);
+    } catch(e) { alert('Error: '+e.message); }
+    setLoading(false);
+  };
+
+  const checkStep = async () => {
+    if (!input.trim()) return;
+    setLoading(true);
+    const expectedStep = steps[currentStep];
+    try {
+      const prompt = `Student answer for step ${currentStep+1}: "${input}"\nExpected step: "${expectedStep}"\nIs the student's answer mathematically correct for this step? Answer ONLY with JSON: {"correct": true/false, "feedback": "brief explanation"}`;
+      const text = await callGroq([{ role:'user', content:prompt }], 300);
+      const cleaned = text.replace(/```json\n?|\n?```/g,'').trim();
+      const parsed = JSON.parse(cleaned);
+      setUserSteps(s => [...s, { input, correct:parsed.correct, expected:expectedStep, feedback:parsed.feedback }]);
+      setFeedback(parsed);
+      if (parsed.correct) {
+        if (currentStep + 1 >= steps.length) setDone(true);
+        else { setCurrentStep(c=>c+1); setInput(''); }
+      }
+    } catch(e) {}
+    setLoading(false);
+  };
+
+  const reset = () => { setQuestion(''); setSteps([]); setUserSteps([]); setCurrentStep(0); setInput(''); setFeedback(null); setDone(false); };
+
+  return (
+    <div>
+      <div className="glass" style={{ borderRadius:16, padding:20, marginBottom:16 }}>
+        <div style={{ fontWeight:700, fontSize:14, color:'var(--muted)', marginBottom:10, fontFamily:"'Plus Jakarta Sans',sans-serif", textTransform:'uppercase', letterSpacing:'0.5px' }}>
+          {T('Step-by-Step Mode','الوضع خطوة بخطوة')}
+        </div>
+        <div style={{ fontSize:13, color:'var(--muted)', marginBottom:14, fontFamily:"'Plus Jakarta Sans',sans-serif" }}>
+          {T('Enter a problem and solve it step by step. AI checks each step!','أدخل مسألة وحلّها خطوة بخطوة. الذكاء الاصطناعي يفحص كل خطوة!')}
+        </div>
+        <textarea className="input-field" rows={2} placeholder={T('Enter a math problem...','أدخل مسألة رياضية...')} value={question} onChange={e=>setQuestion(e.target.value)} dir={lang==='ar'?'rtl':'ltr'}/>
+        <div style={{ display:'flex', gap:8, marginTop:10 }}>
+          <button onClick={startProblem} disabled={loading||!question.trim()} style={{ flex:1, background:loading||!question.trim()?'var(--surface2)':'linear-gradient(135deg,var(--accent),var(--accent2))', color:loading||!question.trim()?'var(--muted)':'white', border:'none', borderRadius:10, padding:'12px', fontFamily:"'Plus Jakarta Sans',sans-serif", fontWeight:700, fontSize:14, cursor:loading||!question.trim()?'not-allowed':'pointer' }}>
+            {loading && !steps.length ? T('Loading...','جاري التحميل...') : T('🚀 Start Problem','🚀 ابدأ المسألة')}
+          </button>
+          {steps.length > 0 && <button onClick={reset} style={{ padding:'12px 16px', borderRadius:10, border:'1.5px solid var(--border)', background:'transparent', color:'var(--text)', cursor:'pointer', fontFamily:"'Plus Jakarta Sans',sans-serif", fontWeight:600 }}>{T('Reset','إعادة')}</button>}
+        </div>
+      </div>
+
+      {steps.length > 0 && (
+        <div>
+          <div style={{ marginBottom:12 }}>
+            <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:10 }}>
+              <div style={{ fontWeight:700, fontSize:14, color:'var(--text)', fontFamily:"'Plus Jakarta Sans',sans-serif" }}>{T('Your Steps','خطواتك')}</div>
+              <div style={{ fontSize:12, color:'var(--muted)', fontFamily:"'Plus Jakarta Sans',sans-serif" }}>{T(`Step ${currentStep+1} of ${steps.length}`,`الخطوة ${currentStep+1} من ${steps.length}`)}</div>
+            </div>
+            <div style={{ background:'var(--surface2)', borderRadius:8, height:6, overflow:'hidden' }}>
+              <div style={{ height:'100%', background:'linear-gradient(90deg,var(--accent),var(--accent2))', width:`${((currentStep)/(steps.length))*100}%`, transition:'width 0.3s' }}/>
+            </div>
+          </div>
+
+          {userSteps.map((s,i)=>(
+            <div key={i} className={`step-item ${s.correct?'correct':'wrong'}`}>
+              <div style={{ display:'flex', alignItems:'center', gap:6, marginBottom:6 }}>
+                <span>{s.correct?'✅':'❌'}</span>
+                <span style={{ fontWeight:700, fontSize:12, color:s.correct?'var(--green)':'var(--red)', fontFamily:"'Plus Jakarta Sans',sans-serif" }}>{T(`Step ${i+1}`,`الخطوة ${i+1}`)}</span>
+              </div>
+              <div style={{ fontSize:13, color:'var(--text)', fontFamily:"'Plus Jakarta Sans',sans-serif" }}>Your: {s.input}</div>
+              {!s.correct && <div style={{ fontSize:12, color:'var(--muted)', marginTop:4, fontFamily:"'Plus Jakarta Sans',sans-serif" }}>✓ {s.expected}</div>}
+            </div>
+          ))}
+
+          {done ? (
+            <div className="glass" style={{ borderRadius:14, padding:20, textAlign:'center', background:'rgba(16,185,129,0.05)', borderColor:'var(--green)', borderWidth:1, borderStyle:'solid' }}>
+              <div style={{ fontSize:40, marginBottom:8 }}>🎉</div>
+              <div style={{ fontWeight:800, fontSize:18, color:'var(--green)', fontFamily:"'Plus Jakarta Sans',sans-serif" }}>{T('Perfect! All steps correct!','ممتاز! جميع الخطوات صحيحة!')}</div>
+            </div>
+          ) : (
+            <div className="glass" style={{ borderRadius:14, padding:16 }}>
+              <div style={{ fontWeight:700, fontSize:13, color:'var(--accent)', marginBottom:10, fontFamily:"'Plus Jakarta Sans',sans-serif" }}>{T(`Enter Step ${currentStep+1}:`,`أدخل الخطوة ${currentStep+1}:`)}</div>
+              {feedback && !feedback.correct && (
+                <div style={{ background:'rgba(239,68,68,0.08)', borderRadius:10, padding:'10px 12px', marginBottom:10, fontSize:13, color:'var(--red)', fontFamily:"'Plus Jakarta Sans',sans-serif", direction:lang==='ar'?'rtl':'ltr' }}>
+                  ❌ {feedback.feedback}
+                </div>
+              )}
+              <div style={{ display:'flex', gap:8 }}>
+                <input className="input-field" style={{ flex:1, padding:'10px 12px', fontSize:13 }} placeholder={T('Your answer for this step...','إجابتك لهذه الخطوة...')} value={input} onChange={e=>setInput(e.target.value)} onKeyDown={e=>e.key==='Enter'&&checkStep()} dir={lang==='ar'?'rtl':'ltr'}/>
+                <button onClick={checkStep} disabled={loading||!input.trim()} style={{ background:'var(--accent)', color:'white', border:'none', borderRadius:10, padding:'10px 16px', cursor:loading||!input.trim()?'not-allowed':'pointer', fontWeight:700, fontSize:14 }}>
+                  {loading ? '...' : T('Check','تحقق')}
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ─── Spaced Repetition ───
+function SpacedRepetition({ lang, onReplay }) {
+  const T = (en,ar) => lang==='ar'?ar:en;
+  const history = DB.get('history') || [];
+  const now = Date.now();
+
+  // Items due for review: wrong answers older than 1 day
+  const due = history.filter(h => {
+    const daysSince = (now - h.timestamp) / (1000*60*60*24);
+    return daysSince >= 1 && !h.mastered;
+  });
+
+  return (
+    <div>
+      <div className="glass" style={{ borderRadius:14, padding:16, marginBottom:16, background:due.length>0?'rgba(245,158,11,0.05)':'rgba(16,185,129,0.05)', borderColor:due.length>0?'var(--gold)':'var(--green)', borderWidth:1, borderStyle:'solid' }}>
+        <div style={{ fontWeight:700, fontSize:14, color:due.length>0?'var(--gold)':'var(--green)', fontFamily:"'Plus Jakarta Sans',sans-serif", marginBottom:6 }}>
+          {due.length > 0 ? `⏰ ${T(`${due.length} problems due for review!`,`${due.length} مسألة للمراجعة!`)}` : `✅ ${T('All caught up!','أنت محدّث!')}`}
+        </div>
+        <div style={{ fontSize:12, color:'var(--muted)', fontFamily:"'Plus Jakarta Sans',sans-serif" }}>
+          {T('Review past mistakes to reinforce your understanding.','راجع أخطاءك السابقة لتعزيز فهمك.')}
+        </div>
+      </div>
+      {due.length === 0 ? (
+        <div style={{ textAlign:'center', padding:30, color:'var(--muted)', fontFamily:"'Plus Jakarta Sans',sans-serif" }}>
+          {T('No reviews due. Keep practicing!','لا مراجعات مطلوبة. استمر في التدرب!')}
+        </div>
+      ) : (
+        <div style={{ display:'flex', flexDirection:'column', gap:10 }}>
+          {due.map((h,i)=>(
+            <div key={i} className="history-item" onClick={()=>onReplay(h)}>
+              <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:4 }}>
+                <span style={{ fontWeight:700, fontSize:12, color:'var(--gold)', fontFamily:"'Plus Jakarta Sans',sans-serif" }}>{h.subject} • {T('Review Now','راجع الآن')}</span>
+                <span style={{ fontSize:11, color:'var(--muted)' }}>{Math.floor((now-h.timestamp)/(1000*60*60*24))}d ago</span>
+              </div>
+              <div style={{ fontSize:13, color:'var(--text)', fontFamily:"'Plus Jakarta Sans',sans-serif" }}>❓ {h.question}</div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ─── Export to PDF ───
+function exportPDF(analysis, practiceProblems, question, studentAnswer, lang) {
+  const win = window.open('', '_blank');
+  const T = (en,ar) => lang==='ar'?ar:en;
+  const cards = analysis || [];
+  const html = `<!DOCTYPE html><html dir="${lang==='ar'?'rtl':'ltr'}" lang="${lang}">
+<head><meta charset="UTF-8"><title>Analysis Report</title>
+<style>body{font-family:${lang==='ar'?'Arial, sans-serif':'Georgia, serif'};max-width:700px;margin:40px auto;color:#1e293b;line-height:1.8;padding:20px;}
+h1{color:#3b6fd4;border-bottom:2px solid #3b6fd4;padding-bottom:10px;} h2{color:#4f8ef7;margin-top:24px;} .card{background:#f8faff;border-left:4px solid #4f8ef7;padding:14px;margin:12px 0;border-radius:4px;} .q{background:#f0f4ff;padding:14px;border-radius:8px;margin:16px 0;} .footer{color:#64748b;font-size:12px;margin-top:40px;text-align:center;}</style>
+</head><body>
+<h1>🧠 ${T('Error Analysis Report','تقرير تحليل الخطأ')}</h1>
+<div class="q"><strong>${T('Question:','السؤال:')}</strong> ${question}</div>
+<div class="q"><strong>${T('Your Answer:','إجابتك:')}</strong> ${studentAnswer}</div>
+${cards.map(c=>`<div class="card"><h2>${c.key}</h2><p>${c.value}</p></div>`).join('')}
+${practiceProblems?.length?`<h2>🎯 ${T('Practice Problems','تمارين')}</h2>${practiceProblems.map((p,i)=>`<div class="card"><strong>${i+1}. ${p.question}</strong><br/>✓ ${p.answer}</div>`).join('')}`:''}
+<div class="footer">Generated by Why Did I Get It Wrong? • ${new Date().toLocaleDateString()}</div>
+</body></html>`;
+  win.document.write(html);
+  win.document.close();
+  setTimeout(()=>win.print(), 500);
+}
+
+// ─── Main App ───
+function App() {
+  const [theme, setTheme] = useState('dark');
+  const [lang, setLang] = useState('en');
+  const [subject, setSubject] = useState('algebra');
+  const [question, setQuestion] = useState('');
+  const [studentAnswer, setStudentAnswer] = useState('');
+  const [correctAnswer, setCorrectAnswer] = useState('');
+  const [analysis, setAnalysis] = useState(null);
+  const [practiceProblems, setPracticeProblems] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [activeTab, setActiveTab] = useState('analyze');
+  const [explainStyle, setExplainStyle] = useState('normal');
+  const [showMathKb, setShowMathKb] = useState(false);
+  const [activeInput, setActiveInput] = useState('question');
+  const [autoCalcResult, setAutoCalcResult] = useState(null);
+  const [streak, setStreak] = useState(0);
+  const [showStreak, setShowStreak] = useState(false);
+
+  const questionRef = useRef(null);
+  const answerRef = useRef(null);
+  const correctRef = useRef(null);
+
+  useEffect(() => { document.body.className = theme === 'light' ? 'light' : ''; }, [theme]);
+  useEffect(() => { document.documentElement.setAttribute('dir', lang==='ar'?'rtl':'ltr'); document.documentElement.setAttribute('lang', lang); }, [lang]);
+
+  useEffect(() => {
+    if (!question.trim()) { setAutoCalcResult(null); return; }
+    const detected = extractEquation(question);
+    if (detected) { setAutoCalcResult(detected); setCorrectAnswer(String(detected.result)); }
+    else { setAutoCalcResult(null); }
+  }, [question]);
+
+  useEffect(() => {
+    const s = DB.get('streak') || { count:0, lastDate:null };
+    setStreak(s.count);
+  }, []);
+
+
+  const insertSymbol = (sym) => {
+    const refs = { question:questionRef, studentAnswer:answerRef, correctAnswer:correctRef };
+    const setters = { question:setQuestion, studentAnswer:setStudentAnswer, correctAnswer:setCorrectAnswer };
+    const values = { question, studentAnswer, correctAnswer };
+    const ref = refs[activeInput]?.current;
+    const setter = setters[activeInput];
+    if (!setter) return;
+    const pos = ref ? ref.selectionStart : values[activeInput].length;
+    const val = values[activeInput];
+    setter(val.slice(0,pos)+sym+val.slice(pos));
+    setTimeout(()=>{ if(ref){ref.focus();ref.setSelectionRange(pos+sym.length,pos+sym.length);}},10);
+  };
+
+  const analyze = async () => {
+    if (!question.trim() || !studentAnswer.trim()) {
+      alert(lang==='ar'?'يرجى إدخال السؤال وإجابتك أولاً.':'Please enter the question and your answer');
+      return;
+    }
+    setLoading(true); setAnalysis(null); setPracticeProblems([]);
+    let verifiedAnswer = correctAnswer;
+    const detected = extractEquation(question);
+    if (detected) verifiedAnswer = String(detected.result);
+    const subjectName = SUBJECTS.find(s=>s.id===subject)?.[lang==='ar'?'nameAr':'name'] || subject;
+    const styleInstruction = explainStyle==='simple' ? 'Use very simple, clear language.' : explainStyle==='technical' ? 'Use precise technical terminology.' : 'Use clear formal academic language.';
+
+    const prompt = lang === 'ar'
+      ? `أنت مدرس رياضيات متخصص. مادتك: ${subjectName}.\nتعليمات إلزامية:\n- اللغة: العربية الفصحى فقط. يُحظر أي كلمة أجنبية أو فرنسية أو تركية.\n- المصطلحات الرياضية بالعربية: "الضرب" لا "multiply".\n- علامات الترقيم العربية: الفاصلة (،) وعلامة الاستفهام (؟).\n- ${explainStyle==='simple'?'أسلوب بسيط للمبتدئين.':explainStyle==='technical'?'مصطلحات تقنية متقدمة.':'أسلوب أكاديمي رسمي.'}\n- JSON صحيح فقط بدون markdown.\n\nالسؤال: ${question}\nإجابة الطالب: ${studentAnswer}\n${verifiedAnswer?`الإجابة الصحيحة: ${verifiedAnswer}`:''}\n\nأجب بـ JSON:\n{"correctAnswer":"...","mistakeType":"...","whereItWentWrong":"...","whyItWasWrong":"...","correctApproach":"...","keyConceptToRemember":"...","similarPractice":"...","difficulty":"سهل أو متوسط أو صعب","practiceProblems":[{"question":"...","answer":"..."},{"question":"...","answer":"..."},{"question":"...","answer":"..."}]}`
+      : `You are a professional math tutor. Subject: ${subjectName}.\nInstructions: English only. ${styleInstruction} Respond ONLY with valid JSON.\n\nQuestion: ${question}\nStudent's Answer: ${studentAnswer}\n${verifiedAnswer?`Correct Answer (verified): ${verifiedAnswer}`:''}\n\nRespond with:\n{"correctAnswer":"...","mistakeType":"...","whereItWentWrong":"...","whyItWasWrong":"...","correctApproach":"...","keyConceptToRemember":"...","similarPractice":"...","difficulty":"Easy/Medium/Hard","practiceProblems":[{"question":"...","answer":"..."},{"question":"...","answer":"..."},{"question":"...","answer":"..."}]}`;
+
+    try {
+      const systemMessage = lang === 'ar'
+        ? 'أنت مساعد رياضيات. اكتب بالعربية الفصحى فقط. JSON فقط.'
+        : 'You are a math tutor. Respond in English only. Output valid JSON only.';
+
+      let text = await callGroq([{ role:'system', content:systemMessage }, { role:'user', content:prompt }]);
+
+      if (lang === 'ar') {
+        const cleanupPrompt = `النص التالي JSON رياضي. صحّح الكلمات الأجنبية بمرادفها العربي، وصحّح الإملاء والترقيم العربي. لا تغيّر مفاتيح JSON ولا الأرقام. أعد JSON المُصحَّح فقط:\n${text}`;
+        text = await callGroq([{ role:'system', content:'أنت مدقق لغوي عربي. أعد JSON مُصحَّح فقط بدون markdown.' }, { role:'user', content:cleanupPrompt }], 1800);
+      }
+
+      const cleaned = text.replace(/```json\n?|\n?```/g,'').trim();
+      const parsed = JSON.parse(cleaned);
+      const { practiceProblems:pp, difficulty, ...rest } = parsed;
+      const cards = Object.entries(rest).map(([key,value])=>({ key, value:String(value), lang }));
+      if (difficulty) cards.push({ key:'difficulty', value:difficulty, lang });
+      setAnalysis(cards);
+      if (pp) setPracticeProblems(pp);
+
+      // Save to history
+      const history = DB.get('history') || [];
+      history.push({
+        timestamp: Date.now(),
+        subject: subjectName,
+        question, studentAnswer,
+        mistakeType: parsed.mistakeType || '',
+        cards, practiceProblems: pp || []
+      });
+      DB.set('history', history);
+
+      // Update streak
+      const s = DB.get('streak') || { count:0, lastDate:null };
+      const today = new Date().toDateString();
+      if (s.lastDate !== today) {
+        const newCount = s.count + 1;
+        DB.set('streak', { count:newCount, lastDate:today });
+        setStreak(newCount);
+        setShowStreak(true);
+        setTimeout(()=>setShowStreak(false), 3000);
+      }
+    } catch (err) { alert('Error: '+err.message); }
+    finally { setLoading(false); }
+  };
+
+  const replayHistory = (h) => {
+    setQuestion(h.question);
+    setStudentAnswer(h.studentAnswer);
+    setAnalysis(h.cards);
+    setPracticeProblems(h.practiceProblems || []);
+    setActiveTab('analyze');
+  };
+
+  const reset = () => { setQuestion(''); setStudentAnswer(''); setCorrectAnswer(''); setAnalysis(null); setPracticeProblems([]); setAutoCalcResult(null); };
+
+  const T = (en,ar) => lang==='ar'?ar:en;
+
+  const tabs = [
+    { id:'analyze', label:T('Analyze','تحليل'), icon:'🔍' },
+    { id:'calculator', label:T('Calculator','حاسبة'), icon:'🧮' },
+    { id:'stepmode', label:T('Steps','خطوات'), icon:'📋' },
+    { id:'history', label:T('History','السجل'), icon:'📚' },
+    { id:'review', label:T('Review','مراجعة'), icon:'⏰' },
+  ];
+
+  return (
+    <div style={{ minHeight:'100vh', background:'var(--bg)', padding:'0 0 60px 0', overflowY:'visible' }}>
+
+      {/* Streak popup */}
+      {showStreak && (
+        <div style={{ position:'fixed', top:80, left:'50%', transform:'translateX(-50%)', zIndex:1000, background:'linear-gradient(135deg,#f59e0b,#ef4444)', color:'white', borderRadius:20, padding:'10px 24px', fontFamily:"'Plus Jakarta Sans',sans-serif", fontWeight:700, fontSize:14, boxShadow:'0 8px 32px rgba(0,0,0,0.3)', animation:'fadeUp 0.3s ease' }}>
+          🔥 {streak} day streak! Keep it up!
+        </div>
+      )}
+
+      {/* Header */}
+      <div style={{ position:'sticky', top:0, zIndex:50, background:'var(--bg)', borderBottom:'1px solid var(--border)', padding:'10px 16px', display:'flex', alignItems:'center', justifyContent:'space-between' }}>
+        <div style={{ display:'flex', alignItems:'center', gap:10 }}>
+          <div style={{ width:34, height:34, borderRadius:10, background:'linear-gradient(135deg,var(--accent),var(--accent2))', display:'flex', alignItems:'center', justifyContent:'center', fontSize:17 }}>🧠</div>
+          <div>
+            <div style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", fontWeight:800, fontSize:14, color:'var(--text)' }}>{T('Why Did I Get It Wrong?','لماذا أخطأتُ؟')}</div>
+            <div style={{ fontSize:10, color:'var(--muted)' }}>{streak > 0 && <span className="streak-badge">🔥 {streak}</span>}</div>
+          </div>
+        </div>
+        <div style={{ display:'flex', gap:6, alignItems:'center' }}>
+          <button className={`lang-toggle ${lang==='en'?'active':''}`} onClick={()=>setLang('en')}>EN</button>
+          <button className={`lang-toggle ${lang==='ar'?'active':''}`} onClick={()=>setLang('ar')}>ع</button>
+          <button onClick={()=>setTheme(t=>t==='dark'?'light':'dark')} style={{ background:'var(--surface2)', border:'1px solid var(--border)', borderRadius:8, padding:'5px 8px', cursor:'pointer', fontSize:14 }}>{theme==='dark'?'☀️':'🌙'}</button>
+        </div>
+      </div>
+
+      {/* Tabs */}
+      <div style={{ display:'flex', gap:2, padding:'12px 16px 0', borderBottom:'1px solid var(--border)', background:'var(--bg)', overflowX:'auto' }}>
+        {tabs.map(t=>(
+          <button key={t.id} className={`tab-btn ${activeTab===t.id?'active':''}`} onClick={()=>setActiveTab(t.id)} style={{ whiteSpace:'nowrap' }}>
+            {t.icon} {t.label}
+          </button>
+        ))}
+      </div>
+
+      <div style={{ maxWidth:700, margin:'0 auto', padding:'20px' }}>
+
+        {/* Calculator Tab */}
+        {activeTab==='calculator' && (
+          <div className="glass" style={{ borderRadius:16, padding:20 }}>
+            <div style={{ fontWeight:700, fontSize:16, marginBottom:16, color:'var(--text)', fontFamily:"'Plus Jakarta Sans',sans-serif" }}>{T('Built-in Calculator','الحاسبة')}</div>
+            <Calculator onUseResult={(expr,result)=>{ setCorrectAnswer(result); setActiveTab('analyze'); }}/>
+          </div>
+        )}
+
+        {/* Step Mode Tab */}
+        {activeTab==='stepmode' && <StepMode lang={lang} subject={subject}/>}
+
+        {/* History Tab */}
+        {activeTab==='history' && <HistoryView lang={lang} onReplay={replayHistory}/>}
+
+        {/* Review Tab */}
+        {activeTab==='review' && <SpacedRepetition lang={lang} onReplay={replayHistory}/>}
+
+        {/* Analyze Tab */}
+        {activeTab==='analyze' && (
+          <>
+            {/* Subject */}
+            <div className="glass" style={{ borderRadius:16, padding:20, marginBottom:16 }}>
+              <div style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", fontWeight:700, fontSize:13, color:'var(--muted)', textTransform:'uppercase', letterSpacing:'0.5px', marginBottom:12 }}>{T('Select Subject','اختر المادة')}</div>
+              <div className="subject-grid" style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:8 }}>
+                {SUBJECTS.map(s=>(
+                  <button key={s.id} className={`subject-btn ${subject===s.id?'active':''}`} onClick={()=>setSubject(s.id)}>
+                    <div style={{ fontSize:18, marginBottom:3 }}>{s.icon}</div>
+                    <div style={{ fontSize:10, fontWeight:600, color:subject===s.id?'var(--accent)':'var(--text)', fontFamily:"'Plus Jakarta Sans',sans-serif", lineHeight:1.2 }}>{lang==='ar'?s.nameAr:s.name}</div>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Style */}
+            <div className="glass" style={{ borderRadius:16, padding:16, marginBottom:16 }}>
+              <div style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", fontWeight:700, fontSize:13, color:'var(--muted)', textTransform:'uppercase', letterSpacing:'0.5px', marginBottom:10 }}>{T('Explanation Style','أسلوب الشرح')}</div>
+              <div style={{ display:'flex', gap:8 }}>
+                {[{id:'simple',en:'🧒 Simple',ar:'🧒 بسيط'},{id:'normal',en:'🎓 Normal',ar:'🎓 عادي'},{id:'technical',en:'🔬 Technical',ar:'🔬 متقدم'}].map(s=>(
+                  <button key={s.id} onClick={()=>setExplainStyle(s.id)} style={{ flex:1, padding:'8px', borderRadius:10, border:'1.5px solid', borderColor:explainStyle===s.id?'var(--accent)':'var(--border)', background:explainStyle===s.id?'rgba(79,142,247,0.1)':'var(--surface)', color:explainStyle===s.id?'var(--accent)':'var(--text)', cursor:'pointer', fontFamily:"'Plus Jakarta Sans',sans-serif", fontWeight:600, fontSize:13, transition:'all 0.2s' }}>
+                    {lang==='ar'?s.ar:s.en}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Form */}
+            <div className="glass" style={{ borderRadius:16, padding:20, marginBottom:16 }}>
+              <div style={{ marginBottom:14 }}>
+                <label style={{ display:'block', fontFamily:"'Plus Jakarta Sans',sans-serif", fontWeight:700, fontSize:13, color:'var(--muted)', textTransform:'uppercase', letterSpacing:'0.5px', marginBottom:8 }}>{T('The Question','السؤال')}</label>
+                <textarea ref={questionRef} className="input-field" rows={3} placeholder={T('e.g. Solve for x: 2x + 5 = 13','مثال: حل من أجل x: 2x + 5 = 13')} value={question} onChange={e=>setQuestion(e.target.value)} onFocus={()=>setActiveInput('question')} dir={lang==='ar'?'rtl':'ltr'}/>
+                {autoCalcResult && (
+                  <div style={{ marginTop:8, background:'rgba(16,185,129,0.1)', border:'1px solid rgba(16,185,129,0.4)', borderRadius:10, padding:'8px 12px', display:'flex', alignItems:'center', gap:8, fontSize:13 }}>
+                    <span>🧮</span>
+                    <span style={{ color:'var(--green)', fontWeight:600, fontFamily:"'Plus Jakarta Sans',sans-serif" }}>{T('Auto-detected:','اكتُشف تلقائياً:')}</span>
+                    <span style={{ fontFamily:"'JetBrains Mono',monospace", color:'var(--text)', fontWeight:700 }}>{autoCalcResult.expr} = <span style={{ color:'var(--green)' }}>{autoCalcResult.result}</span></span>
+                  </div>
+                )}
+              </div>
+              <div style={{ marginBottom:14 }}>
+                <label style={{ display:'block', fontFamily:"'Plus Jakarta Sans',sans-serif", fontWeight:700, fontSize:13, color:'var(--muted)', textTransform:'uppercase', letterSpacing:'0.5px', marginBottom:8 }}>{T('Your Wrong Answer','إجابتك الخاطئة')}</label>
+                <input ref={answerRef} className="input-field" placeholder={T('e.g. x = 9','مثال: x = 9')} value={studentAnswer} onChange={e=>setStudentAnswer(e.target.value)} onFocus={()=>setActiveInput('studentAnswer')} dir={lang==='ar'?'rtl':'ltr'}/>
+              </div>
+              <div style={{ marginBottom:16 }}>
+                <label style={{ display:'block', fontFamily:"'Plus Jakarta Sans',sans-serif", fontWeight:700, fontSize:13, color:'var(--muted)', textTransform:'uppercase', letterSpacing:'0.5px', marginBottom:8 }}>{T('Correct Answer (optional)','الجواب الصحيح (اختياري)')}</label>
+                <input ref={correctRef} className="input-field" placeholder={T('e.g. x = 4','مثال: x = 4')} value={correctAnswer} onChange={e=>setCorrectAnswer(e.target.value)} onFocus={()=>setActiveInput('correctAnswer')} dir={lang==='ar'?'rtl':'ltr'}/>
+              </div>
+              <div style={{ marginBottom:16 }}>
+                <button onClick={()=>setShowMathKb(s=>!s)} style={{ background:'var(--surface2)', border:'1px solid var(--border)', borderRadius:10, color:'var(--text)', padding:'8px 14px', cursor:'pointer', fontFamily:"'Plus Jakarta Sans',sans-serif", fontWeight:600, fontSize:13, width:'100%', textAlign:'left' }}>
+                  {showMathKb?'▲':'▼'} {T('Math Keyboard','لوحة رياضية')}
+                </button>
+                {showMathKb && (<div style={{ marginTop:10, background:'var(--surface2)', border:'1px solid var(--border)', borderRadius:12, padding:12 }}><MathKeyboard onInsert={insertSymbol}/></div>)}
+              </div>
+              <div style={{ display:'flex', gap:10 }}>
+                <button onClick={analyze} disabled={loading} className={!loading?'glow-btn':''} style={{ flex:1, background:'linear-gradient(135deg,var(--accent),var(--accent2))', color:'white', border:'none', borderRadius:12, padding:'14px', fontFamily:"'Plus Jakarta Sans',sans-serif", fontWeight:700, fontSize:15, cursor:loading?'not-allowed':'pointer', opacity:loading?0.7:1, display:'flex', alignItems:'center', justifyContent:'center', gap:8 }}>
+                  {loading ? (<><div className="spinner" style={{ width:18, height:18, border:'2px solid rgba(255,255,255,0.3)', borderTop:'2px solid white', borderRadius:'50%' }}/>{T('Analyzing...','جاري التحليل...')}</>) : (<>{T('⚡ Analyze My Mistake','⚡ حلل خطأي')}</>)}
+                </button>
+                <button onClick={reset} style={{ padding:'14px 18px', borderRadius:12, border:'1.5px solid var(--border)', background:'transparent', color:'var(--text)', cursor:'pointer', fontFamily:"'Plus Jakarta Sans',sans-serif", fontWeight:600 }}>{T('Reset','مسح')}</button>
+              </div>
+            </div>
+
+            {/* Results */}
+            {analysis && (
+              <div>
+                <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:14 }}>
+                  <div style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", fontWeight:800, fontSize:18, color:'var(--text)' }}>{T('Analysis Results','نتائج التحليل')}</div>
+                  <button onClick={()=>exportPDF(analysis,practiceProblems,question,studentAnswer,lang)} style={{ background:'var(--surface2)', border:'1px solid var(--border)', borderRadius:10, padding:'8px 14px', cursor:'pointer', color:'var(--text)', fontFamily:"'Plus Jakarta Sans',sans-serif", fontWeight:600, fontSize:12 }}>
+                    📄 {T('Export PDF','تصدير PDF')}
+                  </button>
+                </div>
+                <div style={{ display:'flex', flexDirection:'column', gap:10 }}>
+                  {analysis.map((card,i)=><ResultCard key={i} card={card} index={i}/>)}
+                </div>
+                {practiceProblems.length > 0 && (
+                  <div className="glass" style={{ borderRadius:16, padding:20, marginTop:16 }}>
+                    <PracticeProblems problems={practiceProblems} lang={lang}/>
+                  </div>
+                )}
+                <Chatbot analysis={analysis} practiceProblems={practiceProblems} lang={lang} question={question} studentAnswer={studentAnswer}/>
+              </div>
+            )}
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.render(<App/>, document.getElementById('root'));
+</script>
+</body>
+</html>
