@@ -56,39 +56,6 @@ The AI returns:
 | Backend Proxy | Netlify Functions |
 | Hosting | Netlify |
 
----
-
-## 🚀 Getting Started
-
-### Prerequisites
-- A [Groq API key](https://console.groq.com) (free)
-- A [Netlify](https://netlify.com) account (free)
-- A [GitHub](https://github.com) account
-
-### Folder Structure
-```
-why-did-i-get-it-wrong/
-├── index.html
-├── netlify.toml
-└── netlify/
-    └── functions/
-        └── analyze.js
-```
-
-### Deploy to Netlify
-
-1. Fork or clone this repo
-2. Connect your GitHub repo to Netlify
-3. Go to **Site Settings → Environment Variables**
-4. Add a new variable:
-   - Key: `GROQ_API_KEY`
-   - Value: your Groq API key
-5. Trigger a new deploy
-6. Done ✅
-
-The API key is never exposed in the frontend — all requests are proxied through a Netlify serverless function.
-
----
 
 ## 🔒 Security
 
